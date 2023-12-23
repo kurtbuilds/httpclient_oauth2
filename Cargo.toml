@@ -2,6 +2,11 @@
 name = "httpclient_oauth2"
 version = "0.1.0"
 edition = "2021"
+description = "A simple OAuth2 client library for Rust. Provides middleware for httpclient."
+license = "MIT"
+repository = "https://github.com/kurtbuilds/httpclient_oauth2"
+homepage = "https://github.com/kurtbuilds/httpclient_oauth2"
+docs = "https://docs.rs/httpclient_oauth2"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
