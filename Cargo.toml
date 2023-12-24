@@ -1,6 +1,6 @@
 [package]
 name = "httpclient_oauth2"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "A simple OAuth2 client library for Rust. Provides middleware for httpclient."
 license = "MIT"
