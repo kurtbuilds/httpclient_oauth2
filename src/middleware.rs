@@ -21,7 +21,7 @@ pub struct RefreshData {
 }
 
 #[derive(Debug)]
-pub struct Oauth2 {
+pub struct OAuth2 {
     // Configuration
     pub refresh_endpoint: String,
     pub client_id: String,
@@ -35,7 +35,7 @@ pub struct Oauth2 {
     pub callback: Option<fn(RefreshData) -> ()>,
 }
 
-impl Oauth2 {
+impl OAuth2 {
     fn authorize(&self, mut request: InMemoryRequest) -> InMemoryRequest {
         let access_token = self.access_token.read().unwrap();
         let access_token = access_token.as_str();
@@ -52,7 +52,7 @@ impl Oauth2 {
 }
 
 #[async_trait]
-impl Middleware for Oauth2 {
+impl Middleware for OAuth2 {
     async fn handle(&self, request: InMemoryRequest, next: Next<'_>) -> Result {
         let req = self.authorize(request);
         let res = next.run(req.clone().into()).await?;

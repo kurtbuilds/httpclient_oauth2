@@ -1,5 +1,5 @@
 use std::sync::RwLock;
-pub use middleware::Oauth2;
+pub use middleware::OAuth2;
 pub use refresh::RefreshConfig;
 
 mod middleware;
@@ -14,12 +14,12 @@ use crate::middleware::TokenType;
 use crate::step2_exchange::{ExchangeData, ExchangeResponse, RedirectedParams};
 use httpclient::InMemoryResponseExt;
 
-/// There are two key structs in this module: `Oauth2Flow` and `Oauth2`.
-/// Oauth2Flow brings the user through the Oauth2 flow, and Oauth2
+/// There are two key structs in this module: `OAuth2Flow` and `OAuth2`.
+/// OAuth2Flow brings the user through the OAuth2 flow, and OAuth2
 /// is a middleware used to authorize requests.
 
 /// The main entry point for taking the user through OAuth2 flow.
-pub struct Oauth2Flow {
+pub struct OAuth2Flow {
     pub client_id: String,
     pub client_secret: String,
 
@@ -33,7 +33,7 @@ pub struct Oauth2Flow {
     pub redirect_uri: String,
 }
 
-impl Oauth2Flow {
+impl OAuth2Flow {
     /// Step 1: Send the user to the authorization URL.
     pub fn create_authorization_url(&self, init: Initialize) -> Uri {
         let params = InitializeParams {
@@ -80,8 +80,8 @@ impl Oauth2Flow {
     }
 
     /// Step 3: Use the exchange response to create a middleware. You can also use `middleware_from_pieces`.
-    pub fn middleware_from_exchange(&self, exchange: ExchangeResponse) -> Oauth2 {
-        Oauth2 {
+    pub fn middleware_from_exchange(&self, exchange: ExchangeResponse) -> OAuth2 {
+        OAuth2 {
             refresh_endpoint: self.refresh_endpoint.clone(),
             client_id: self.client_id.clone(),
             client_secret: self.client_secret.clone(),
@@ -92,8 +92,8 @@ impl Oauth2Flow {
         }
     }
 
-    pub fn middleware_from_pieces(&self, access: String, refresh: String, token: TokenType) -> Oauth2 {
-        Oauth2 {
+    pub fn middleware_from_pieces(&self, access: String, refresh: String, token: TokenType) -> OAuth2 {
+        OAuth2 {
             refresh_endpoint: self.refresh_endpoint.clone(),
             client_id: self.client_id.clone(),
             client_secret: self.client_secret.clone(),
