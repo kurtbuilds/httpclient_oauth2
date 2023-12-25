@@ -1,5 +1,16 @@
 use serde::{Deserialize, Serialize};
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum PromptType {
+    None,
+    Consent,
+    SelectAccount,
+    #[serde(untagged)]
+    Other(String)
+}
+
+
 /// Parameters for initializing the OAuth2 flow.
 #[derive(Debug, Clone, Serialize)]
 pub struct Initialize {
@@ -7,8 +18,7 @@ pub struct Initialize {
     pub access_type: AccessType,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub state: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub prompt: Option<String>,
+    pub prompt: PromptType,
 }
 
 impl Initialize {
@@ -17,20 +27,21 @@ impl Initialize {
             scope,
             access_type,
             state: None,
-            prompt: None,
+            prompt: PromptType::None,
         }
     }
 
-    pub fn prompt(mut self, prompt: String) -> Self {
-        self.prompt = Some(prompt);
+    pub fn prompt(mut self, prompt: PromptType) -> Self {
+        self.prompt = prompt;
         self
     }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(untagged, rename_all = "lowercase")]
+#[serde(rename_all = "lowercase")]
 pub enum AccessType {
     Offline,
+    #[serde(untagged)]
     Other(String),
 }
 
@@ -44,6 +55,5 @@ pub(super) struct InitializeParams<'a> {
     pub access_type: AccessType,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub state: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub prompt: Option<String>,
+    pub prompt: PromptType,
 }

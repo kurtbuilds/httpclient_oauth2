@@ -1,5 +1,5 @@
 use std::sync::RwLock;
-use httpclient::ResponseExt;
+use httpclient::{Error, ResponseExt};
 
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
@@ -9,9 +9,9 @@ use crate::refresh::RefreshResponse;
 
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(untagged)]
 pub enum TokenType {
     Bearer,
+    #[serde(untagged)]
     Other(String),
 }
 
@@ -55,13 +55,13 @@ impl OAuth2 {
 impl Middleware for OAuth2 {
     async fn handle(&self, request: InMemoryRequest, next: Next<'_>) -> Result {
         let req = self.authorize(request);
-        let res = next.run(req.clone().into()).await?;
-        let status = res.status().as_u16();
-        if ![400, 401].contains(&status) {
-            return Ok(res);
+        let res = next.run(req.clone().into()).await;
+        if !matches!(&res, Err(Error::HttpError(e)) if e.status().as_u16() == 401) {
+            // if we didn't get a 401, proceed as normal
+            return res;
         }
         let refresh_req = RequestBuilder::new(next.client, Method::POST, self.refresh_endpoint.parse().unwrap())
-            .json(RefreshRequest {
+            .form(RefreshRequest {
                 client_id: &self.client_id,
                 client_secret: &self.client_secret,
                 grant_type: "refresh_token",
@@ -79,7 +79,7 @@ impl Middleware for OAuth2 {
                 access_token: data.access_token,
             });
         }
-        // reauthorize the request with the newly set access token. it will overwrite the previously set headers
+        // // reauthorize the request with the newly set access token. it will overwrite the previously set headers
         let req = self.authorize(req);
         next.run(req.clone().into()).await
     }
