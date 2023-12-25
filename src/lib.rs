@@ -1,5 +1,5 @@
 use std::sync::RwLock;
-pub use middleware::OAuth2;
+pub use middleware::{OAuth2, TokenType};
 pub use refresh::RefreshConfig;
 
 mod middleware;
@@ -10,7 +10,6 @@ mod step1_init;
 pub use step1_init::{Initialize};
 use step1_init::{InitializeParams};
 use httpclient::{Uri, client, Result};
-use crate::middleware::TokenType;
 use crate::step2_exchange::{ExchangeData, ExchangeResponse, RedirectedParams};
 use httpclient::InMemoryResponseExt;
 
@@ -92,12 +91,12 @@ impl OAuth2Flow {
         }
     }
 
-    pub fn middleware_from_pieces(&self, access: String, refresh: String, token: TokenType) -> OAuth2 {
+    pub fn bearer_middleware(&self, access: String, refresh: String) -> OAuth2 {
         OAuth2 {
             refresh_endpoint: self.refresh_endpoint.clone(),
             client_id: self.client_id.clone(),
             client_secret: self.client_secret.clone(),
-            token_type: token,
+            token_type: TokenType::Bearer,
             access_token: RwLock::new(access),
             refresh_token: refresh,
             callback: None,
