@@ -10,7 +10,7 @@ async fn main() {
         .with_middleware(httpclient::middleware::Logger)
     );
     let cred = std::fs::read_to_string("../client_secret.json").unwrap();
-    let mut cred: Value = serde_json::from_str(cred).unwrap();
+    let mut cred: Value = serde_json::from_str(&cred).unwrap();
     let cred = cred.as_object_mut().unwrap().remove("web").unwrap();
     let flow = OAuth2Flow {
         client_id: cred["client_id"].as_str().unwrap().to_string(),

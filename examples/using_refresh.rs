@@ -1,16 +1,15 @@
 //! client_secret.json is the file you get from Google Cloud Console
 use httpclient::InMemoryResponseExt;
 use serde_json::Value;
-use httpclient_oauth2::{AccessType, Initialize, OAuth2Flow, PromptType};
-use text_io::read;
+use httpclient_oauth2::OAuth2Flow;
 
 #[tokio::main]
 async fn main() {
     httpclient::init_shared_client(httpclient::Client::new()
         .with_middleware(httpclient::middleware::Logger)
     );
-    let cred = std::fs::read_to_string("../client_secret.json");
-    let mut cred: Value = serde_json::from_str(cred).unwrap();
+    let cred = std::fs::read_to_string("../client_secret.json").unwrap();
+    let mut cred: Value = serde_json::from_str(&cred).unwrap();
     let cred = cred.as_object_mut().unwrap().remove("web").unwrap();
     let flow = OAuth2Flow {
         client_id: cred["client_id"].as_str().unwrap().to_string(),
