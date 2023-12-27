@@ -3,6 +3,7 @@ use crate::middleware::TokenType;
 
 /// The params returned
 #[derive(Debug, Deserialize)]
+#[cfg_attr(feature = "oasgen", derive(oasgen::OaSchema))]
 pub struct RedirectData {
     pub code: String,
     pub state: Option<String>,
