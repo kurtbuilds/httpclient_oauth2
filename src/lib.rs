@@ -13,7 +13,7 @@ mod step1_init;
 pub use step1_init::{Initialize, AccessType, PromptType};
 use step1_init::{InitializeParams};
 use httpclient::{Uri, client, Result};
-use crate::step2_exchange::{ExchangeData, ExchangeResponse, RedirectedParams};
+pub use crate::step2_exchange::{ExchangeData, ExchangeResponse, RedirectData};
 use httpclient::InMemoryResponseExt;
 
 /// The main entry point for taking the user through OAuth2 flow.
@@ -59,10 +59,10 @@ impl OAuth2Flow {
     }
 
     /// Step 2a: Extract the code from the redirect URL.
-    pub fn extract_code(&self, url: String) -> Result<RedirectedParams> {
+    pub fn extract_code(&self, url: String) -> Result<RedirectData> {
         let uri = url.parse::<Uri>().unwrap();
         let query = uri.query().unwrap();
-        let params = serde_qs::from_str::<RedirectedParams>(query).unwrap();
+        let params = serde_qs::from_str::<RedirectData>(query).unwrap();
         Ok(params)
     }
 

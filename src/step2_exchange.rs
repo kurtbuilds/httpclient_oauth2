@@ -3,7 +3,7 @@ use crate::middleware::TokenType;
 
 /// The params returned
 #[derive(Debug, Deserialize)]
-pub struct RedirectedParams {
+pub struct RedirectData {
     pub code: String,
     pub state: Option<String>,
 }
