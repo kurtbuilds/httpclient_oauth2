@@ -23,6 +23,6 @@ pub struct ExchangeResponse {
     pub access_token: String,
     pub expires_in: u64,
     pub refresh_token: Option<String>,
-    pub scope: String,
+    pub scope: Option<String>,
     pub token_type: TokenType,
 }
