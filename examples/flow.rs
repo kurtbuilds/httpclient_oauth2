@@ -33,7 +33,7 @@ async fn main() {
 
     let line: String = read!("{}\n");
 
-    let params = flow.extract_code(line).unwrap();
+    let params = flow.extract_code(&line).unwrap();
 
     // if we had passed in the state, now would be the time to check it
 
