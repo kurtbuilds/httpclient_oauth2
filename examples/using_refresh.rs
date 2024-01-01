@@ -23,7 +23,7 @@ async fn main() {
     let refresh = std::env::var("REFRESH_TOKEN").expect("REFRESH_TOKEN is missing");
 
     let mut middleware = flow.bearer_middleware(access, refresh);
-    middleware.callback = Some(|refresh| {
+    middleware.callback(|refresh| {
         println!("Received updated access token: {}", refresh.access_token);
     });
 
