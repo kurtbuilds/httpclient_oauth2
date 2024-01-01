@@ -1,3 +1,4 @@
+use std::fmt::{Debug, Formatter};
 use std::sync::RwLock;
 use httpclient::{Error, ResponseExt};
 
@@ -20,7 +21,12 @@ pub struct RefreshData {
     pub access_token: String,
 }
 
-#[derive(Debug)]
+// const NO_OP: fn(RefreshData) = |_: RefreshData| {};
+// fn(..) -> ()
+// Fn()
+// FnMut()
+// FnOnce()
+
 pub struct OAuth2 {
     // Configuration
     pub refresh_endpoint: String,
@@ -32,10 +38,28 @@ pub struct OAuth2 {
     pub access_token: RwLock<String>,
     pub refresh_token: String,
 
-    pub callback: Option<fn(RefreshData) -> ()>,
+    pub callback: Option<Box<dyn Fn(RefreshData) + Send + Sync + 'static>>,
+}
+
+impl Debug for OAuth2 {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("OAuth2")
+            .field("refresh_endpoint", &self.refresh_endpoint)
+            .field("client_id", &self.client_id)
+            .field("client_secret", &self.client_secret)
+            .field("token_type", &self.token_type)
+            .field("access_token", &self.access_token)
+            .field("refresh_token", &self.refresh_token)
+            .field("callback", &self.callback.as_ref().map(|_| "Fn(RefreshData)"))
+            .finish()
+    }
 }
 
 impl OAuth2 {
+    pub fn callback(&mut self, data: impl Fn(RefreshData) + Send + Sync + 'static) {
+        self.callback = Some(Box::new(data));
+    }
+
     fn authorize(&self, mut request: InMemoryRequest) -> InMemoryRequest {
         let access_token = self.access_token.read().unwrap();
         let access_token = access_token.as_str();
@@ -74,7 +98,7 @@ impl Middleware for OAuth2 {
             let mut access_token = self.access_token.write().unwrap();
             *access_token = data.access_token.clone();
         }
-        if let Some(callback) = self.callback {
+        if let Some(callback) = self.callback.as_ref() {
             callback(RefreshData {
                 access_token: data.access_token,
             });

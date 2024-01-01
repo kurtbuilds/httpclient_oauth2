@@ -11,6 +11,6 @@ pub struct RefreshConfig {
 pub(crate) struct RefreshResponse {
     pub access_token: String,
     pub expires_in: u64,
-    pub scope: String,
+    pub scope: Option<String>,
     pub token_type: TokenType,
 }

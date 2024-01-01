@@ -2,7 +2,7 @@
 //! OAuth2Flow brings the user through the OAuth2 flow, and OAuth2
 //! is a middleware used to authorize requests.
 use std::sync::RwLock;
-pub use middleware::{OAuth2, TokenType};
+pub use middleware::{OAuth2, TokenType, RefreshData};
 pub use refresh::RefreshConfig;
 
 mod middleware;
