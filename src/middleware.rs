@@ -80,7 +80,7 @@ impl Middleware for OAuth2 {
     async fn handle(&self, request: InMemoryRequest, next: Next<'_>) -> Result {
         let req = self.authorize(request);
         let res = next.run(req.clone().into()).await;
-        if !matches!(&res, Err(Error::HttpError(e)) if e.status().as_u16() == 401) {
+        if !matches!(&res, Ok(resp) if resp.status().as_u16() == 401) {
             // if we didn't get a 401, proceed as normal
             return res;
         }

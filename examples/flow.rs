@@ -7,7 +7,7 @@ use text_io::read;
 #[tokio::main]
 async fn main() {
     httpclient::init_shared_client(httpclient::Client::new()
-        .with_middleware(httpclient::middleware::Logger)
+        .with_middleware(httpclient::Logger)
     );
     let cred = std::fs::read_to_string("../client_secret.json").unwrap();
     let mut cred: Value = serde_json::from_str(&cred).unwrap();
@@ -22,7 +22,10 @@ async fn main() {
     };
 
     let url = flow.create_authorization_url(Initialize {
-        scope: "https://www.googleapis.com/auth/gmail.modify".to_string(),
+        scope: vec![
+            "https://www.googleapis.com/auth/gmail.modify",
+            "https://mail.google.com/",
+        ].join(" "),
         access_type: AccessType::Offline,
         state: None,
         prompt: PromptType::Consent,
