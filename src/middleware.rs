@@ -1,11 +1,10 @@
 use std::fmt::{Debug, Formatter};
 use std::sync::RwLock;
-use httpclient::{Error, ResponseExt};
 
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 
-use httpclient::{header, HeaderName, InMemoryRequest, Method, Middleware, Next, RequestBuilder, Result};
+use httpclient::{header, HeaderName, InMemoryRequest, Method, Middleware, Next, RequestBuilder, ProtocolResult, Response};
 use crate::refresh::RefreshResponse;
 
 
@@ -77,7 +76,7 @@ impl OAuth2 {
 
 #[async_trait]
 impl Middleware for OAuth2 {
-    async fn handle(&self, request: InMemoryRequest, next: Next<'_>) -> Result {
+    async fn handle(&self, request: InMemoryRequest, next: Next<'_>) -> ProtocolResult<Response> {
         let req = self.authorize(request);
         let res = next.run(req.clone().into()).await;
         if !matches!(&res, Ok(resp) if resp.status().as_u16() == 401) {
@@ -93,7 +92,9 @@ impl Middleware for OAuth2 {
             })
             .build();
         let res = next.run(refresh_req).await?;
-        let data: RefreshResponse = res.json().await?;
+        let (_, body) = res.into_parts();
+        let body = body.into_memory().await?;
+        let data: RefreshResponse = body.json()?;
         {
             let mut access_token = self.access_token.write().unwrap();
             *access_token = data.access_token.clone();
