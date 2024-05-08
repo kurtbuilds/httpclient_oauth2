@@ -284,13 +284,47 @@ dependencies = [
 ]
 
 [[package]]
+name = "http"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "21b9ddb458710bc376481b842f5da65cdf31522de232c1ca8146abce2a358258"
+dependencies = [
+ "bytes",
+ "fnv",
+ "itoa",
+]
+
+[[package]]
 name = "http-body"
 version = "0.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7ceab25649e9960c0311ea418d17bee82c0dcec1bd053b5f9a66e265a693bed2"
 dependencies = [
  "bytes",
- "http",
+ "http 0.2.11",
+ "pin-project-lite",
+]
+
+[[package]]
+name = "http-body"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1cac85db508abc24a2e48553ba12a996e87244a0395ce011e62b37158745d643"
+dependencies = [
+ "bytes",
+ "http 1.1.0",
+]
+
+[[package]]
+name = "http-body-util"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0475f8b2ac86659c21b64320d5d653f9efe42acd2a4e560073ec61a155a34f1d"
+dependencies = [
+ "bytes",
+ "futures-core",
+ "http 1.1.0",
+ "http-body 1.0.0",
  "pin-project-lite",
 ]
 
@@ -302,13 +336,13 @@ checksum = "d897f394bad6a705d5f4104762e116a75639e470d80901eed05a860a95cb1904"
 
 [[package]]
 name = "httpclient"
-version = "0.22.0"
+version = "0.22.1"
 dependencies = [
  "async-trait",
  "cookie",
  "encoding_rs",
  "futures",
- "http",
+ "http 0.2.11",
  "hyper",
  "hyper-rustls",
  "indexmap",
@@ -316,7 +350,7 @@ dependencies = [
  "regex",
  "serde",
  "serde_json",
- "serde_qs",
+ "serde_qs 0.12.0",
  "tokio",
  "tracing",
  "urlencoding",
@@ -325,14 +359,14 @@ dependencies = [
 
 [[package]]
 name = "httpclient_oauth2"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "async-trait",
  "httpclient",
  "oasgen",
  "serde",
  "serde_json",
- "serde_qs",
+ "serde_qs 0.13.0",
  "text_io",
  "tokio",
 ]
@@ -353,8 +387,8 @@ dependencies = [
  "futures-channel",
  "futures-core",
  "futures-util",
- "http",
- "http-body",
+ "http 0.2.11",
+ "http-body 0.4.6",
  "httparse",
  "httpdate",
  "itoa",
@@ -373,7 +407,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ec3efd23720e2049821a693cbc7e65ea87c72f1c58ff2f9522ff332b1491e590"
 dependencies = [
  "futures-util",
- "http",
+ "http 0.2.11",
  "hyper",
  "log",
  "rustls",
@@ -465,12 +499,14 @@ dependencies = [
 
 [[package]]
 name = "oasgen"
-version = "0.18.4"
+version = "0.20.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ebe7062b07c5204de1d8b264477608d3329ed6b6528f300459babbfbaa512a8f"
+checksum = "aa21dccf81fcfa291cf45d4d2e48d86892895b38cf352eff637cfce3a54f62ac"
 dependencies = [
  "futures",
- "http",
+ "http 1.1.0",
+ "http-body 1.0.0",
+ "http-body-util",
  "indexmap",
  "inventory",
  "oasgen-core",
@@ -486,30 +522,30 @@ dependencies = [
 
 [[package]]
 name = "oasgen-core"
-version = "0.18.4"
+version = "0.20.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "562b69215230275524a663509fdfd1ca2fafc9b7170813775943f1e48534a04f"
+checksum = "fc38e9190c4d09e93609c695de9babd090bee22f3f5d7ba471357c8ce7a0d73d"
 dependencies = [
- "http",
+ "http 1.1.0",
  "indexmap",
  "inventory",
  "openapiv3-extended",
  "serde_json",
- "structmeta",
+ "structmeta 0.3.0",
  "syn",
 ]
 
 [[package]]
 name = "oasgen-macro"
-version = "0.18.4"
+version = "0.20.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ec7369b10977258bf286c6633e9e36311862532b0f92dda71eab53e7d4351794"
+checksum = "fc886b31b0d5538892c67cb9a3ab995e59527b88301d6bfbc6f23bdd88d16989"
 dependencies = [
  "oasgen-core",
  "proc-macro2",
  "quote",
  "serde_derive_internals",
- "structmeta",
+ "structmeta 0.2.0",
  "syn",
 ]
 
@@ -530,12 +566,12 @@ checksum = "3fdb12b2476b595f9358c5161aa467c2438859caa136dec86c26fdd2efe17b92"
 
 [[package]]
 name = "openapiv3-extended"
-version = "4.0.4"
+version = "6.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "481a4eec3bb350818fd87986982e820e227c98e818fcec6523a6081f646130a8"
+checksum = "756f9fddd9e5264d11c36c405a0b8a16bf7b2037bc8a424a0d14f74fd73dcb7f"
 dependencies = [
  "anyhow",
- "http",
+ "http 1.1.0",
  "indexmap",
  "serde",
  "serde_json",
@@ -602,18 +638,18 @@ checksum = "5b40af805b3121feab8a3c29f04d8ad262fa8e0561883e7653e024ae4479e6de"
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.73"
+version = "1.0.82"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2dd5e8a1f1029c43224ad5898e50140c2aebb1705f19e67c918ebf5b9e797fe1"
+checksum = "8ad3d49ab951a01fbaafe34f2ec74122942fe18a3f9814c3268f1bb72042131b"
 dependencies = [
  "unicode-ident",
 ]
 
 [[package]]
 name = "quote"
-version = "1.0.34"
+version = "1.0.36"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "22a37c9326af5ed140c86a46655b5278de879853be5573c01df185b6f49a580a"
+checksum = "0fa76aaf39101c457836aec0ce2316dbdc3ab723cdda1c6bd4e6ad4208acaca7"
 dependencies = [
  "proc-macro2",
 ]
@@ -866,6 +902,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "serde_qs"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cd34f36fe4c5ba9654417139a9b3a20d2e1de6012ee678ad14d240c22c78d8d6"
+dependencies = [
+ "percent-encoding",
+ "serde",
+ "thiserror",
+]
+
+[[package]]
 name = "serde_yaml"
 version = "0.9.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -926,7 +973,19 @@ checksum = "78ad9e09554f0456d67a69c1584c9798ba733a5b50349a6c0d0948710523922d"
 dependencies = [
  "proc-macro2",
  "quote",
- "structmeta-derive",
+ "structmeta-derive 0.2.0",
+ "syn",
+]
+
+[[package]]
+name = "structmeta"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2e1575d8d40908d70f6fd05537266b90ae71b15dbbe7a8b7dffa2b759306d329"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "structmeta-derive 0.3.0",
  "syn",
 ]
 
@@ -942,10 +1001,21 @@ dependencies = [
 ]
 
 [[package]]
-name = "syn"
-version = "2.0.44"
+name = "structmeta-derive"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "92d27c2c202598d05175a6dd3af46824b7f747f8d8e9b14c623f19fa5069735d"
+checksum = "152a0b65a590ff6c3da95cabe2353ee04e6167c896b28e3b14478c2636c922fc"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "syn"
+version = "2.0.61"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c993ed8ccba56ae856363b1845da7266a7cb78e1d146c8a32d54b45a8b831fc9"
 dependencies = [
  "proc-macro2",
  "quote",

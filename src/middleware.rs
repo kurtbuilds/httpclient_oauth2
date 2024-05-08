@@ -92,8 +92,12 @@ impl Middleware for OAuth2 {
             })
             .build();
         let res = next.run(refresh_req).await?;
+        if res.status().is_client_error() || res.status().is_server_error() {
+            return Ok(res);
+        }
         let (_, body) = res.into_parts();
         let body = body.into_memory().await?;
+
         let data: RefreshResponse = body.json()?;
         {
             let mut access_token = self.access_token.write().unwrap();
