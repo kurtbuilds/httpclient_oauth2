@@ -4,7 +4,7 @@ use std::sync::RwLock;
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 
-use httpclient::{header, HeaderName, InMemoryRequest, Method, Middleware, Next, RequestBuilder, ProtocolResult, Response};
+use httpclient::{header, HeaderName, InMemoryRequest, Method, Middleware, Next, RequestBuilder, ProtocolResult, Response, Client};
 use crate::refresh::RefreshResponse;
 
 
@@ -69,6 +69,16 @@ impl OAuth2 {
         }
         request
     }
+
+    pub fn make_refresh_request<'a>(&'a self, client: &'a Client) -> RequestBuilder {
+        RequestBuilder::new(client, Method::POST, self.refresh_endpoint.parse().unwrap())
+            .form(RefreshRequest {
+                client_id: &self.client_id,
+                client_secret: &self.client_secret,
+                grant_type: "refresh_token",
+                refresh_token: &self.refresh_token,
+            })
+    }
 }
 
 #[async_trait]
@@ -80,15 +90,8 @@ impl Middleware for OAuth2 {
             // if we didn't get a 401, proceed as normal
             return res;
         }
-        let refresh_req = RequestBuilder::new(next.client, Method::POST, self.refresh_endpoint.parse().unwrap())
-            .form(RefreshRequest {
-                client_id: &self.client_id,
-                client_secret: &self.client_secret,
-                grant_type: "refresh_token",
-                refresh_token: &self.refresh_token,
-            })
-            .build();
-        let res = next.run(refresh_req).await?;
+        let refresh_req = self.make_refresh_request(next.client);
+        let res = next.run(refresh_req.build()).await?;
         if res.status().is_client_error() || res.status().is_server_error() {
             return Ok(res);
         }
