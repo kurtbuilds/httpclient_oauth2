@@ -13,4 +13,6 @@ pub(crate) struct RefreshResponse {
     pub expires_in: u64,
     pub scope: Option<String>,
     pub token_type: TokenType,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub refresh_token: Option<String>,
 }

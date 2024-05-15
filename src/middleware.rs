@@ -18,13 +18,10 @@ pub enum TokenType {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct RefreshData {
     pub access_token: String,
+    pub token_type: TokenType,
+    pub expires_in: u64,
+    pub refresh_token: Option<String>,
 }
-
-// const NO_OP: fn(RefreshData) = |_: RefreshData| {};
-// fn(..) -> ()
-// Fn()
-// FnMut()
-// FnOnce()
 
 pub struct OAuth2 {
     // Configuration
@@ -106,6 +103,9 @@ impl Middleware for OAuth2 {
         if let Some(callback) = self.callback.as_ref() {
             callback(RefreshData {
                 access_token: data.access_token,
+                token_type: data.token_type,
+                expires_in: data.expires_in,
+                refresh_token: data.refresh_token,
             });
         }
         // // reauthorize the request with the newly set access token. it will overwrite the previously set headers
